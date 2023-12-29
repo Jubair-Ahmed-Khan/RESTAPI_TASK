@@ -6,6 +6,9 @@ const dotenv = require("dotenv");
 
 dotenv.config("dotenv");
 
+const connectDB = require("./database/connect");
+
+// const databaseConnection = require("./db/config");
 const PORT = process.env.PORT || 3000;
 
 app.use(cors({ origin: "*" }));
@@ -18,16 +21,9 @@ app.get("/", (req, res) => {
 });
 
 
-const start = async () => {
-    try {
-        app.listen(PORT, () => {
-            console.log(`Server is running on port ${PORT}`);
-        });
-
-    } catch (error) {
-        console.log(error);
-    }
-};
-
-start();
+connectDB(() => {
+    app.listen(PORT, () => {
+        console.log(`server is running on port ${PORT}`);
+    });
+});
 
