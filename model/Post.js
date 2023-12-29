@@ -1,4 +1,4 @@
-const mongoose = require("mpngoose");
+const mongoose = require("mongoose");
 
 const postSchema = new mongoose.Schema(
     {
