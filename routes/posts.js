@@ -1,3 +1,5 @@
+//ROUTES FOR SEARCHING POSTS 
+
 const express = require("express");
 const PostController = require("../controller/PostController");
 

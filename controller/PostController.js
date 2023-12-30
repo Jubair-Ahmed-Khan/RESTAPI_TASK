@@ -1,8 +1,11 @@
+//POST CONTROLLER
+
 const HTTP_STATUS = require("../httpStatusCodes/codes");
 const axios = require("axios");
 const IP = require("request-ip");
 const Post = require("../model/Post");
 const Search = require("../model/Search");
+
 
 class PostController {
     async getPostByKeyword(req, res) {
@@ -10,11 +13,14 @@ class PostController {
         // console.log("I am from postcontroller search");
 
         try {
+
+            //get keyword
             let { keyword } = req.query;
             keyword = keyword?.toLowerCase()?.trim();
 
             //console.log("keyword=", keyword);
 
+            //check whether keyword is empty or not
             if (keyword == "") {
 
                 const status = HTTP_STATUS.UNPROCESSABLE_ENTITY;
@@ -27,6 +33,7 @@ class PostController {
 
             }
 
+            //External API
             let url = `https://jsonplaceholder.typicode.com/posts`;
             let posts;
 
@@ -35,6 +42,7 @@ class PostController {
 
                 // console.log(response);
 
+                //check whether fetching posts was unsuccessful or not
                 if (response.status !== 200) {
                     const status = HTTP_STATUS.UNPROCESSABLE_ENTITY;
                     const response = {};
@@ -63,6 +71,8 @@ class PostController {
 
             const matchedPosts = [];
 
+
+            //store matched post in array
             let data = posts?.filter((post) => {
                 if (post?.title?.toLowerCase()?.includes(keyword) || post?.body?.toLowerCase()?.includes(keyword)) {
                     //console.log(post);
@@ -80,10 +90,12 @@ class PostController {
 
             //console.log(matchedPosts.length);
 
+            //save matched post in posts collection in db
             const result = await Post.bulkWrite(matchedPosts);
 
             // console.log("result == ", result);
 
+            //get matched post from db
             const foundedPosts = await Post.find({
                 $or: [
                     { title: { $regex: keyword, $options: "i" } },
@@ -93,6 +105,7 @@ class PostController {
 
             const matchedIds = foundedPosts.map((post) => String(post?._id));
 
+            //store search history of matched post
             await Search.create({
                 ipAddress: IP.getClientIp(req),
                 keyword,
@@ -121,7 +134,7 @@ class PostController {
             const status = HTTP_STATUS.INTERNAL_SERVER_ERROR;
             const response = {};
 
-            response.error = err;
+            response.error = true;
             response.message = "Internal server error";
 
             return res.status(status).send(response);
