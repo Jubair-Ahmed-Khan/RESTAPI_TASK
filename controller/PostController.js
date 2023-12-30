@@ -78,7 +78,7 @@ class PostController {
                 }
             });
 
-            console.log(matchedPosts.length);
+            //console.log(matchedPosts.length);
 
             const result = await Post.bulkWrite(matchedPosts);
 
@@ -99,7 +99,7 @@ class PostController {
                 searchResult: matchedIds,
             });
 
-            console.log("data == ", data);
+            //console.log("data == ", data);
 
             let postResult = {
                 posts: data,
@@ -122,7 +122,6 @@ class PostController {
             const response = {};
 
             response.error = err;
-            response.data = postResult
             response.message = "Internal server error";
 
             return res.status(status).send(response);
